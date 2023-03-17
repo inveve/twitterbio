@@ -228,7 +228,7 @@ const Home3: NextPage = () => {
                                         href={`https://twitter.com/${user?.username}/status/${tweet.id}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="bg-blue-600 text-white px-4 py-2 rounded-md inline-block mt-2"
+                                        className="bg-black text-white px-4 py-2 rounded-md inline-block mt-2"
                                     >
                                         View Tweet
                                     </a>
