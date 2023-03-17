@@ -1,22 +1,21 @@
 import type { NextPage } from "next";
-import { useEffect, useRef, useState } from "react";
 import Head from "next/head";
+import Image from "next/image";
+import { useRef, useEffect, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
+import DropDown, { VibeType } from "../components/DropDown";
 import Footer from "../components/Footer";
 import Github from "../components/GitHub";
 import Header from "../components/Header";
 import LoadingDots from "../components/LoadingDots";
-import { Tweet } from "../components/Tweet.js";
-interface ITweet {
-    id: string;
-    text: string;
-}
-const Home: NextPage = () => {
-    const [loading, setLoading] = useState(false);
-    const [tweets, setTweets] = useState<ITweet[]>([]); // <-- add the ITweet interface here
-    const [selectedTweet, setSelectedTweet] = useState<ITweet | null>(null); // <-- add the ITweet | null union type here
-    const [generatedReplies, setGeneratedReplies] = useState("");
 
+const Home3: NextPage = () => {
+    const [loading, setLoading] = useState(false);
+    const [bio, setBio] = useState("");
+    const [vibe, setVibe] = useState<VibeType>("Professional");
+    const [generatedBios, setGeneratedBios] = useState<String>("");
+    const [tweets, setTweets] = useState({ data: [] });
+    const [selectedTweet, setSelectedTweet] = useState<String>("");
     const replyRef = useRef<null | HTMLDivElement>(null);
 
     const scrollToReplies = () => {
@@ -42,11 +41,20 @@ const Home: NextPage = () => {
         fetchTweets();
     }, []);
 
-    const generateReply = async (tweet) => {
-        setSelectedTweet(tweet);
-        const prompt = `Generate a creative and witty pun as a reply to the tweet: "${tweet.text}".`;
-        setLoading(true);
+    const bioRef = useRef<null | HTMLDivElement>(null);
 
+    const scrollToBios = () => {
+        if (bioRef.current !== null) {
+            bioRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+    };
+
+    const generateBio = async (event: any, tweet: any) => {
+        setSelectedTweet(tweet);
+        event.preventDefault();
+        setGeneratedBios("");
+        setLoading(true);
+        const prompt = `Generate a creative and witty deez nuts joke as a reply to the tweet: "${tweet.text}".`;
         const response = await fetch("/api/generate", {
             method: "POST",
             headers: {
@@ -61,76 +69,135 @@ const Home: NextPage = () => {
             throw new Error(response.statusText);
         }
 
-        const data = await response.text();
-        setGeneratedReplies(data);
-        scrollToReplies();
+        // This data is a ReadableStream
+        const data = response.body;
+        if (!data) {
+            return;
+        }
+
+        const reader = data.getReader();
+        const decoder = new TextDecoder();
+        let done = false;
+
+        while (!done) {
+            const { value, done: doneReading } = await reader.read();
+            done = doneReading;
+            const chunkValue = decoder.decode(value);
+            setGeneratedBios((prev) => prev + chunkValue);
+        }
+        scrollToBios();
         setLoading(false);
     };
 
     return (
         <div className="flex max-w-5xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
             <Head>
-                <title>Witty Pun Generator</title>
+                <title>Twitter Reply Generator</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
             <Header />
             <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mt-12 sm:mt-20">
-                <a
-                    className="flex max-w-fit items-center justify-center space-x-2 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-600 shadow-md transition-colors hover:bg-gray-100 mb-5"
-                    href="https://github.com/Nutlope/twitterbio"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <Github />
-                    <p>Star on GitHub</p>
-                </a>
                 <h1 className="sm:text-6xl text-4xl max-w-[708px] font-bold text-slate-900">
-                    Generate creative witty puns as replies to tweets using chatGPT
+                    Generate Deez using GPT-4
                 </h1>
-                <p className="text-slate-500 mt-5">47,118 witty puns generated so far.</p>
-                <div className="max-w-xl w-full">
-                    <div className="mt-10">
-                        <p className="font-medium">
-                            Click on a tweet to generate a witty pun reply:
-                        </p>
-                        <ul className="space-y-4 mt-4">
-                            {Array.isArray(tweets) && tweets.map((tweet) => (
-                                <li key={tweet.id} className="cursor-pointer border border-gray-300 rounded-md p-4 hover:bg-gray-100">
-                                    <Tweet tweet={tweet} user={tweet.user} />
-                                </li>
-                            ))}
-                        </ul>
-
-                    </div>
-                    <div ref={replyRef} className="mt-10">
-                        {selectedTweet && (
-                            <>
-                                <p className="font-medium mb-4">
-                                    Generated witty pun reply for tweet:
-                                </p>
-                                <blockquote className="border-l-4 border-gray-300 pl-4 mb-4">
-                                    {selectedTweet.text}
-                                </blockquote>
-                            </>
-                        )}
-                        {loading ? (
-                            <LoadingDots />
-                        ) : (
-                            generatedReplies && (
-                                <div className="border border-gray-300 rounded-md p-4 bg-white">
-                                    {generatedReplies}
+                <p className="text-slate-500 mt-5">69,696 tweets generated so far.</p>
+                <div className="mt-10">
+                    <h2 className="text-2xl font-bold mb-4">Tweets</h2>
+                    <ul className="space-y-4">
+                        {tweets.data.map((tweet) => {
+                            const user = tweets.includes.users.find((u) => u.id === tweet.author_id);
+                            return (
+                                <div
+                                    key={tweet.id}
+                                    className={`p-4 rounded-lg border-2 ${selectedTweet === tweet.id ? "border-black" : "border-gray-300"
+                                        } cursor-pointer bg-white`}
+                                    onClick={() => setSelectedTweet(tweet.id)}
+                                >
+                                    <div className="flex items-start space-x-4">
+                                        <Image
+                                            src='/deez-nuts.png'
+                                            alt={`${user.username} profile`}
+                                            width={48}
+                                            height={48}
+                                            className="rounded-full"
+                                        />
+                                        <div className="flex flex-col">
+                                            <span className="font-bold">{user.name}</span>
+                                            <span className="text-gray-600">@{user.username}</span>
+                                        </div>
+                                    </div>
+                                    <p className="mt-2">{tweet.text}</p>
                                 </div>
-                            )
-                        )}
-                    </div>
+                            );
+                        })}
+                    </ul>
+
+                </div>
+                <div className="max-w-xl w-full">
+
+                    {!loading && (
+                        <button
+                            className="bg-black rounded-xl text-white font-medium px-4 py-2 sm:mt-10 mt-8 hover:bg-black/80 w-full"
+                            onClick={(event) => generateBio(event, tweets.data.find(t => t.id === selectedTweet))}
+                        >
+                            Generate your reply &rarr;
+                        </button>
+                    )}
+                    {loading && (
+                        <button
+                            className="bg-black rounded-xl text-white font-medium px-4 py-2 sm:mt-10 mt-8 hover:bg-black/80 w-full"
+                            disabled
+                        >
+                            <LoadingDots color="white" style="large" />
+                        </button>
+                    )}
+                </div>
+                <Toaster
+                    position="top-center"
+                    reverseOrder={false}
+                    toastOptions={{ duration: 2000 }}
+                />
+                <hr className="h-px bg-gray-700 border-1 dark:bg-gray-700" />
+                <div className="space-y-10 my-10">
+                    {generatedBios && (
+                        <>
+                            <div>
+                                <h2
+                                    className="sm:text-4xl text-3xl font-bold text-slate-900 mx-auto"
+                                    ref={bioRef}
+                                >
+                                    Your generated replies
+                                </h2>
+                            </div>
+                            <div className="space-y-8 flex flex-col items-center justify-center max-w-xl mx-auto">
+                                {generatedBios
+                                    .substring(generatedBios.indexOf("1") + 3)
+                                    .split("2.")
+                                    .map((generatedBio) => {
+                                        return (
+                                            <div
+                                                className="bg-white rounded-xl shadow-md p-4 hover:bg-gray-100 transition cursor-copy border"
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(generatedBio);
+                                                    toast("Tweet copied to clipboard", {
+                                                        icon: "✂️",
+                                                    });
+                                                }}
+                                                key={generatedBio}
+                                            >
+                                                <p>{generatedBio}</p>
+                                            </div>
+                                        );
+                                    })}
+                            </div>
+                        </>
+                    )}
                 </div>
             </main>
             <Footer />
-            <Toaster />
         </div>
     );
-
 };
 
-export default Home;
+export default Home3;
