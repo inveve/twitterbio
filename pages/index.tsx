@@ -181,24 +181,24 @@ const Home3: NextPage = () => {
                 <div className="mt-10">
                     <h2 className="text-2xl font-bold mb-4">Tweets</h2>
                     <div className="flex justify-center items-center w-full mt-4">
-                    <button
-                        onClick={() => {
-                            setIsSpinning(true);
-                            setTimeout(() => {
-                                setIsSpinning(false);
-                                window.location.reload();
-                            }, 1000);
-                        }}
-                        className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition flex items-center justify-center"
-                    >
-                        <span
-                            className={`material-icons ${isSpinning ? 'animate-spin duration-1000 ease-in-out' : ''
-                                }`}
+                        <button
+                            onClick={() => {
+                                setIsSpinning(true);
+                                setTimeout(() => {
+                                    setIsSpinning(false);
+                                    window.location.reload();
+                                }, 1000);
+                            }}
+                            className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition flex items-center justify-center"
                         >
-                            sync
-                        </span>
-                    </button>
-</div>
+                            <span
+                                className={`material-icons ${isSpinning ? 'animate-spin duration-1000 ease-in-out' : ''
+                                    }`}
+                            >
+                                sync
+                            </span>
+                        </button>
+                    </div>
                     <div> --</div>
                     <ul className="space-y-4">
                         {tweets.data.map((tweet) => {
@@ -224,6 +224,14 @@ const Home3: NextPage = () => {
                                         </div>
                                     </div>
                                     <p className="mt-2">{tweet.text}</p>
+                                    <a
+                                        href={`https://twitter.com/${user?.username}/status/${tweet.id}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="bg-blue-600 text-white px-4 py-2 rounded-md inline-block mt-2"
+                                    >
+                                        View Tweet
+                                    </a>
                                 </div>
                             );
                         })}
