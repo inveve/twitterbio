@@ -4,7 +4,7 @@ const twitterClient = new TwitterApi(process.env.TWITTER_BEARER_TOKEN);
 
 export default async function handler(req, res) {
   try {
-    const tweets = await twitterClient.v2.search('imagine dragons -is:retweet lang:en', {
+    const tweets = await twitterClient.v2.search('("imagine dragons" OR "pear" OR "pair" OR "de" OR "Goblin") -is:retweet lang:en', {
       expansions: 'author_id',
       'tweet.fields': 'created_at,public_metrics',
       'user.fields': 'username',
