@@ -9,20 +9,20 @@ import Github from "../components/GitHub";
 import Header from "../components/Header";
 import LoadingDots from "../components/LoadingDots";
 
-  interface TweetsResponse {
+interface TweetsResponse {
     data: {
-      id: string;
-      text: string;
-      author_id: string;
+        id: string;
+        text: string;
+        author_id: string;
     }[];
     includes: {
-      users: {
-        id: string;
-        username: string;
-        name: string;
-      }[];
+        users: {
+            id: string;
+            username: string;
+            name: string;
+        }[];
     };
-  }
+}
 const Home3: NextPage = () => {
     const [loading, setLoading] = useState(false);
     const [bio, setBio] = useState("");
@@ -31,6 +31,7 @@ const Home3: NextPage = () => {
     const [tweets, setTweets] = useState<TweetsResponse>({ data: [], includes: { users: [] } });
     const [selectedTweet, setSelectedTweet] = useState<String>("");
     const replyRef = useRef<null | HTMLDivElement>(null);
+    const [isSpinning, setIsSpinning] = useState(false);
 
     const scrollToReplies = () => {
         if (replyRef.current !== null) {
@@ -116,6 +117,7 @@ const Home3: NextPage = () => {
                     Get them every time with a unique Deez Nutz joke.
                 </h1>
                 <p className="text-slate-500 mt-5">Powered by chatGPT-4</p>
+
                 <div className="max-w-xl w-full">
 
                     {!loading && (
@@ -178,6 +180,26 @@ const Home3: NextPage = () => {
                 </div>
                 <div className="mt-10">
                     <h2 className="text-2xl font-bold mb-4">Tweets</h2>
+                    <div className="flex justify-center items-center w-full mt-4">
+                    <button
+                        onClick={() => {
+                            setIsSpinning(true);
+                            setTimeout(() => {
+                                setIsSpinning(false);
+                                window.location.reload();
+                            }, 1000);
+                        }}
+                        className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition flex items-center justify-center"
+                    >
+                        <span
+                            className={`material-icons ${isSpinning ? 'animate-spin duration-1000 ease-in-out' : ''
+                                }`}
+                        >
+                            sync
+                        </span>
+                    </button>
+</div>
+                    <div> --</div>
                     <ul className="space-y-4">
                         {tweets.data.map((tweet) => {
                             const user = tweets.includes.users.find((u) => u.id === tweet.author_id);

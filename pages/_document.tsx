@@ -30,6 +30,10 @@ class MyDocument extends Document {
             name="twitter:image"
             content="https://deeztweets.com/23772608_0.jpg"
           />
+          <link
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
+            rel="stylesheet"
+          />
         </Head>
         <body>
           <Main />
