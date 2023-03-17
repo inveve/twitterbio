@@ -14,7 +14,7 @@ const Home3: NextPage = () => {
     const [bio, setBio] = useState("");
     const [vibe, setVibe] = useState<VibeType>("Professional");
     const [generatedBios, setGeneratedBios] = useState<String>("");
-    const [tweets, setTweets] = useState({ data: [] });
+    const [tweets, setTweets] = useState({ data: [], includes: { users: [] } });
     const [selectedTweet, setSelectedTweet] = useState<String>("");
     const replyRef = useRef<null | HTMLDivElement>(null);
 
@@ -98,42 +98,10 @@ const Home3: NextPage = () => {
 
             <Header />
             <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mt-12 sm:mt-20">
-                <h1 className="sm:text-6xl text-4xl max-w-[708px] font-bold text-slate-900">
-                    Generate Deez using GPT-4
+                <h1 className="text-4xl max-w-[708px] font-bold text-slate-900">
+                    Get them every time with a unique Deez Nutz joke.
                 </h1>
-                <p className="text-slate-500 mt-5">69,696 tweets generated so far.</p>
-                <div className="mt-10">
-                    <h2 className="text-2xl font-bold mb-4">Tweets</h2>
-                    <ul className="space-y-4">
-                        {tweets.data.map((tweet) => {
-                            const user = tweets.includes.users.find((u) => u.id === tweet.author_id);
-                            return (
-                                <div
-                                    key={tweet.id}
-                                    className={`p-4 rounded-lg border-2 ${selectedTweet === tweet.id ? "border-black" : "border-gray-300"
-                                        } cursor-pointer bg-white`}
-                                    onClick={() => setSelectedTweet(tweet.id)}
-                                >
-                                    <div className="flex items-start space-x-4">
-                                        <Image
-                                            src='/deez-nuts.png'
-                                            alt={`${user.username} profile`}
-                                            width={48}
-                                            height={48}
-                                            className="rounded-full"
-                                        />
-                                        <div className="flex flex-col">
-                                            <span className="font-bold">{user.name}</span>
-                                            <span className="text-gray-600">@{user.username}</span>
-                                        </div>
-                                    </div>
-                                    <p className="mt-2">{tweet.text}</p>
-                                </div>
-                            );
-                        })}
-                    </ul>
-
-                </div>
+                <p className="text-slate-500 mt-5">Powered by chatGPT-4</p>
                 <div className="max-w-xl w-full">
 
                     {!loading && (
@@ -193,6 +161,38 @@ const Home3: NextPage = () => {
                             </div>
                         </>
                     )}
+                </div>
+                <div className="mt-10">
+                    <h2 className="text-2xl font-bold mb-4">Tweets</h2>
+                    <ul className="space-y-4">
+                        {tweets.data.map((tweet) => {
+                            const user = tweets.includes.users.find((u) => u.id === tweet.author_id);
+                            return (
+                                <div
+                                    key={tweet.id}
+                                    className={`p-4 rounded-lg border-2 ${selectedTweet === tweet.id ? "border-black" : "border-gray-300"
+                                        } cursor-pointer bg-white`}
+                                    onClick={() => setSelectedTweet(tweet.id)}
+                                >
+                                    <div className="flex items-start space-x-4">
+                                        <Image
+                                            src='/deez-nuts.png'
+                                            alt={`${user.username} profile`}
+                                            width={48}
+                                            height={48}
+                                            className="rounded-full"
+                                        />
+                                        <div className="flex flex-col">
+                                            <span className="font-bold">{user.name}</span>
+                                            <span className="text-gray-600">@{user.username}</span>
+                                        </div>
+                                    </div>
+                                    <p className="mt-2">{tweet.text}</p>
+                                </div>
+                            );
+                        })}
+                    </ul>
+
                 </div>
             </main>
             <Footer />
