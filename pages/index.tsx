@@ -9,12 +9,26 @@ import Github from "../components/GitHub";
 import Header from "../components/Header";
 import LoadingDots from "../components/LoadingDots";
 
+  interface TweetsResponse {
+    data: {
+      id: string;
+      text: string;
+      author_id: string;
+    }[];
+    includes: {
+      users: {
+        id: string;
+        username: string;
+        name: string;
+      }[];
+    };
+  }
 const Home3: NextPage = () => {
     const [loading, setLoading] = useState(false);
     const [bio, setBio] = useState("");
     const [vibe, setVibe] = useState<VibeType>("Professional");
     const [generatedBios, setGeneratedBios] = useState<String>("");
-    const [tweets, setTweets] = useState({ data: [], includes: { users: [] } });
+    const [tweets, setTweets] = useState<TweetsResponse>({ data: [], includes: { users: [] } });
     const [selectedTweet, setSelectedTweet] = useState<String>("");
     const replyRef = useRef<null | HTMLDivElement>(null);
 
@@ -177,14 +191,14 @@ const Home3: NextPage = () => {
                                     <div className="flex items-start space-x-4">
                                         <Image
                                             src='/deez-nuts.png'
-                                            alt={`${user.username} profile`}
+                                            alt={`${user?.username} profile`}
                                             width={48}
                                             height={48}
                                             className="rounded-full"
                                         />
                                         <div className="flex flex-col">
-                                            <span className="font-bold">{user.name}</span>
-                                            <span className="text-gray-600">@{user.username}</span>
+                                            <span className="font-bold">{user?.name}</span>
+                                            <span className="text-gray-600">@{user?.username}</span>
                                         </div>
                                     </div>
                                     <p className="mt-2">{tweet.text}</p>
