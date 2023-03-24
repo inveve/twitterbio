@@ -7,7 +7,7 @@ export default function Footer() {
         <Link
           href="https://twitter.com/0xdorf"
           className="group"
-          aria-label="TaxPal on Twitter"
+          aria-label="Dorf on Twitter"
         >
           <svg
             aria-hidden="true"
@@ -17,9 +17,9 @@ export default function Footer() {
           </svg>
         </Link>
         <Link
-          href="https://github.com/"
+          href="https://github.com/inveve/twitterbio"
           className="group"
-          aria-label="TaxPal on GitHub"
+          aria-label="deezTweets on GitHub"
         >
           <svg
             aria-hidden="true"

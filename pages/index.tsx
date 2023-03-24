@@ -63,46 +63,47 @@ const Home3: NextPage = () => {
             bioRef.current.scrollIntoView({ behavior: "smooth" });
         }
     };
-
     const generateBio = async (event: any, tweet: any) => {
         setSelectedTweet(tweet);
         event.preventDefault();
         setGeneratedBios("");
         setLoading(true);
-        const prompt = `Generate a creative and witty deez nuts joke as a reply to the tweet: "${tweet.text}".`;
+        const promptWords = ["imagine", "dragons", "pear", "pair", "de"];
+        const prompt = `Generate a creative and witty deez nuts joke as a reply to the tweet starting with "${promptWords.find(word => tweet.text.toLowerCase().includes(word.toLowerCase()))}".`;
         const response = await fetch("/api/generate", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                prompt,
-            }),
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            prompt,
+          }),
         });
-
+      
         if (!response.ok) {
-            throw new Error(response.statusText);
+          throw new Error(response.statusText);
         }
-
+      
         // This data is a ReadableStream
         const data = response.body;
         if (!data) {
-            return;
+          return;
         }
-
+      
         const reader = data.getReader();
         const decoder = new TextDecoder();
         let done = false;
-
+      
         while (!done) {
-            const { value, done: doneReading } = await reader.read();
-            done = doneReading;
-            const chunkValue = decoder.decode(value);
-            setGeneratedBios((prev) => prev + chunkValue);
+          const { value, done: doneReading } = await reader.read();
+          done = doneReading;
+          const chunkValue = decoder.decode(value);
+          setGeneratedBios((prev) => prev + chunkValue);
         }
         scrollToBios();
         setLoading(false);
-    };
+      };
+      
 
     return (
         <div className="flex max-w-5xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
@@ -156,8 +157,7 @@ const Home3: NextPage = () => {
                             </div>
                             <div className="space-y-8 flex flex-col items-center justify-center max-w-xl mx-auto">
                                 {generatedBios
-                                    .substring(generatedBios.indexOf("1") + 3)
-                                    .split("2.")
+                                    .split("\n")
                                     .map((generatedBio) => {
                                         return (
                                             <div
