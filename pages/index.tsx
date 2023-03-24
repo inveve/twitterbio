@@ -64,6 +64,16 @@ const Home3: NextPage = () => {
         }
     };
     const generateBio = async (event: any, tweet: any) => {
+        if (!tweet) {
+            toast.error('Please select a tweet!', {
+                style: {
+                    border: '1px solid black',
+                    background: 'Black',
+                    color: '#FFFFFF',
+            },
+        });
+            return;
+        }
         setSelectedTweet(tweet);
         event.preventDefault();
         setGeneratedBios("");
@@ -71,39 +81,39 @@ const Home3: NextPage = () => {
         const promptWords = ["imagine", "dragons", "pear", "pair", "de"];
         const prompt = `Generate a creative and witty deez nuts joke as a reply to the tweet starting with "${promptWords.find(word => tweet.text.toLowerCase().includes(word.toLowerCase()))}".`;
         const response = await fetch("/api/generate", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            prompt,
-          }),
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                prompt,
+            }),
         });
-      
+
         if (!response.ok) {
-          throw new Error(response.statusText);
+            throw new Error(response.statusText);
         }
-      
+
         // This data is a ReadableStream
         const data = response.body;
         if (!data) {
-          return;
+            return;
         }
-      
+
         const reader = data.getReader();
         const decoder = new TextDecoder();
         let done = false;
-      
+
         while (!done) {
-          const { value, done: doneReading } = await reader.read();
-          done = doneReading;
-          const chunkValue = decoder.decode(value);
-          setGeneratedBios((prev) => prev + chunkValue);
+            const { value, done: doneReading } = await reader.read();
+            done = doneReading;
+            const chunkValue = decoder.decode(value);
+            setGeneratedBios((prev) => prev + chunkValue);
         }
         scrollToBios();
         setLoading(false);
-      };
-      
+    };
+
 
     return (
         <div className="flex max-w-5xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
@@ -120,7 +130,6 @@ const Home3: NextPage = () => {
                 <p className="text-slate-500 mt-5">Powered by chatGPT-4</p>
 
                 <div className="max-w-xl w-full">
-
                     {!loading && (
                         <button
                             className="bg-black rounded-xl text-white font-medium px-4 py-2 sm:mt-10 mt-8 hover:bg-black/80 w-full"
@@ -245,3 +254,7 @@ const Home3: NextPage = () => {
 };
 
 export default Home3;
+function setAlert(arg0: string) {
+    throw new Error("Function not implemented.");
+}
+
